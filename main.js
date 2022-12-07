@@ -12,6 +12,9 @@ const { VerifyDiscordRequest } = require('./utils.js')
 const client = new Client({ intents: [GatewayIntentBits.Guilds] })
 client.commands = new Collection()
 
+
+// ------------------------------------------------------------------------------------------------------------------------//
+// Build Commands
 const commandsPath = path.join(__dirname, 'commands')
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'))
 
@@ -26,20 +29,23 @@ for (const file of commandFiles) {
     }
 }
 
+// ------------------------------------------------------------------------------------------------------------------------//
+
 client.once(Events.ClientReady, async c => {
     console.log(`Ready!, Logged in as ${c.user.tag}`)
 })
 
 client.on(Events.InteractionCreate, async interaction => {
     const command = interaction.client.commands.get(interaction.commandName)
-
+    const { accessToken } = await bnetAuth.credentials.getToken()
+    console.log(accessToken)
     if (!command) {
         console.error(`No command matching ${interaction.commandName} was found.`)
         return
     }
 
     try {
-        await command.execute(interaction)
+        await command.execute(interaction, { accessToken })
     } catch (error) {
         console.error(error)
         await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
@@ -49,12 +55,9 @@ client.on(Events.InteractionCreate, async interaction => {
 client.login(process.env.DISCORD_TOKEN)
 
 const bnetAuth = new ClientOAuth2({
-    clientId: process.env.BLIZZARD_CLIENT_ID,
-    clientSecret: process.env.BLIZZARD_CLIENT_SECRET,
-    accessTokenUri: 'https://oauth.battle.net/token',
-    authorizationUri: 'https://oauth.battle.net/authorize',
-    redirectUri: 'http://localhost:3000/auth/callback',
-    scopes: ['wow.profile']
+    clientId: process.env.BNET_OAUTH_CLIENT_ID,
+    clientSecret: process.env.BNET_OAUTH_CLIENT_SECRET,
+    accessTokenUri: 'https://oauth.battle.net/token'
 })
 
 const app = express()
@@ -72,7 +75,7 @@ app.use((err, req, res, next) => {
 })
 
 app.get('/auth', (req, res) => {
-    const uri = bnetAuth.code.getUri()
+    const uri = bnetAuth.token.createToken()
 
     res.redirect(uri)
 })
