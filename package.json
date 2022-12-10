@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^1.2.1",
+    "bluebird": "^3.7.2",
     "client-oauth2": "^4.3.3",
     "cors": "^2.8.5",
     "discord-interactions": "^3.2.0",
@@ -20,6 +21,7 @@
     "oauth": "^0.10.0",
     "passport": "^0.6.0",
     "passport-bnet": "^2.0.0",
+    "pg": "^8.8.0",
     "simple-oauth2": "^5.0.0",
     "slug": "^8.2.2"
   }

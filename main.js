@@ -1,3 +1,4 @@
+"use strict"
 require('dotenv').config()
 
 const CharacterService = require("./services/CharacterService");
@@ -32,7 +33,7 @@ for (const file of commandFiles) {
 // ------------------------------------------------------------------------------------------------------------------------//
 
 client.once(Events.ClientReady, async c => {
-    console.log(`Ready!, Logged in as ${c.user.tag}`)
+    console.log(`Ready! Logged in as ${c.user.tag}`)
 })
 
 client.on(Events.InteractionCreate, async interaction => {
